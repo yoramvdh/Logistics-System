@@ -17,7 +17,6 @@ int ledLogStatus;
 String ledSasLabState = "off";
 
 // Network credentials
-
 char* ssid = "AZ_Zeno_Gast";
 char* password = "";
 
