@@ -30,8 +30,8 @@ unsigned long previousTime = 0;
 // Define timeout time in milliseconds (example: 2000ms = 2s)
 const long timeoutTime = 2000;
 //Your Domain name with URL path or IP address with path
-String serverNameLog = "http://172.27.4.101/";
-String serverNameLab = "http://172.27.7.39/";
+String serverNameLog = "http://192.168.0.107/";
+String serverNameLab = "http://192.168.0.108/";
 
 // the following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.

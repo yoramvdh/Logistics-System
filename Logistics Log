@@ -4,8 +4,8 @@
 
 // set pin numbers 
 const int buttonLog = 4;  // the number of the pushbutton pin for logistics department
-const int ledLog =  2;    // the number of the LED pin for logistics department
-
+const int ledLog =  5;    // the number of the LED pin for logistics department
+#define INTERNAL_LED 2 // The number of the internal led
 // variable for storing the pushbutton status 
 int buttonState = 0;
 
@@ -34,6 +34,9 @@ unsigned long previousTime = 0;
 // Define timeout time in milliseconds (example: 2000ms = 2s)
 const long timeoutTime = 2000;
 
+IPAddress local_IP(192, 168, 0, 107); // Desired Static IP Address
+IPAddress subnet(255, 255, 255, 0);
+IPAddress gateway(192, 168, 0, 1);
 
 void setup() {
    // Serial port for debugging purposes
@@ -45,20 +48,39 @@ void setup() {
   // initialize the LED pin as an output for logistics department
   pinMode(ledLog, OUTPUT);
 
-    // Connect to Wi-Fi network with SSID and password
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  // Connect to Wi-Fi network with SSID and password
+    WiFi.mode(WIFI_STA);
+    // Configures Static IP Address
+    if (!WiFi.config(local_IP, gateway, subnet))
+    {
+        digitalWrite(INTERNAL_LED, HIGH);   // turn the LED on (HIGH is the voltage level)
+        delay(1000);                       // wait for a second
+        digitalWrite(INTERNAL_LED, LOW);    // turn the LED off by making the voltage LOW
+        delay(1000);      
+         Serial.println("Configuration Failed!");
+    }
+  // Try to connect to wifi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
+      digitalWrite(INTERNAL_LED, HIGH);   // turn the LED on (HIGH is the voltage level)
     Serial.print(".");
   }
-  // Print local IP address and start web server
-  Serial.println("");
-  Serial.println("WiFi connected.");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+  digitalWrite(INTERNAL_LED, LOW);    // turn the LED off by making the voltage LOW
   server.begin();
+  
+    // Print the assigned network settings
+    Serial.println("\nConnected to the WiFi network");
+    Serial.print("Local ESP32 IP: ");
+    Serial.println(WiFi.localIP());
+    Serial.print("Subnet Mask: " );
+    Serial.println(WiFi.subnetMask());
+    Serial.print("Gateway IP: ");
+    Serial.println(WiFi.gatewayIP());
+    Serial.print("DNS 1: ");
+    Serial.println(WiFi.dnsIP(0));
+    Serial.print("DNS 2: ");
+    Serial.println(WiFi.dnsIP(1));
 
 }
 

@@ -7,7 +7,7 @@
 // set pin numbers 
 const int buttonLog = 4;  // the number of the pushbutton pin for logistics department
 const int ledLog =  5;    // the number of the LED pin for logistics department
-
+#define INTERNAL_LED 2 // The number of the internal led
 // variable for storing the pushbutton status 
 int buttonState = 0;
 
@@ -18,6 +18,7 @@ int ledLogStatus;
 String ledSasLogState = "off";
 
 // Replace with your network credentials
+
 char* ssid = "AZ_Zeno_Gast";
 char* password = "";
 
@@ -35,45 +36,47 @@ unsigned long previousTime = 0;
 // Define timeout time in milliseconds (example: 2000ms = 2s)
 const long timeoutTime = 2000;
 
-/*20:18:46.893 -> Connected to the WiFi network
-20:18:46.893 -> Local ESP32 IP: 192.168.0.118
-20:18:46.893 -> Subnet Mask: 255.255.255.0
-20:18:46.893 -> Gateway IP: 192.168.0.1
-20:18:46.893 -> DNS 1: 195.130.130.5
-20:18:46.893 -> DNS 2: 195.130.131.5 
-*/
+
 
 IPAddress local_IP(192, 168, 0, 108); // Desired Static IP Address
 IPAddress subnet(255, 255, 255, 0);
 IPAddress gateway(192, 168, 0, 1);
 
+
 void setup() {
   // Serial port for debugging purposes
   Serial.begin(115200);  
+
+    // initialize digital pin LED_BUILTIN as an output.
+  pinMode(INTERNAL_LED, OUTPUT);
   
   // initialize the pushbutton pin as an input for logistics department
   pinMode(buttonLog, INPUT);
   // initialize the LED pin as an output for logistics department
   pinMode(ledLog, OUTPUT);
-    // Connect to Wi-Fi network with SSID and password
-  //Serial.print("Connecting to ");
-  //Serial.println(ssid);
 
+  // Connect to Wi-Fi network with SSID and password
     WiFi.mode(WIFI_STA);
     // Configures Static IP Address
     if (!WiFi.config(local_IP, gateway, subnet))
     {
-      Serial.println("Configuration Failed!");
+        digitalWrite(INTERNAL_LED, HIGH);   // turn the LED on (HIGH is the voltage level)
+        delay(1000);                       // wait for a second
+        digitalWrite(INTERNAL_LED, LOW);    // turn the LED off by making the voltage LOW
+        delay(1000);      
+         Serial.println("Configuration Failed!");
     }
-
+  // Try to connect to wifi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
+      digitalWrite(INTERNAL_LED, HIGH);   // turn the LED on (HIGH is the voltage level)
     Serial.print(".");
   }
+  digitalWrite(INTERNAL_LED, LOW);    // turn the LED off by making the voltage LOW
   server.begin();
   
-    // Print network settings assigned by the DHCP
+    // Print the assigned network settings
     Serial.println("\nConnected to the WiFi network");
     Serial.print("Local ESP32 IP: ");
     Serial.println(WiFi.localIP());
