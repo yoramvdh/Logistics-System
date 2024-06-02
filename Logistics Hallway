@@ -1,3 +1,12 @@
+// Project: Logistics system
+// Function: Streamlining the service the logistics department provides with an IoT-systems based on led signals.
+// This application is developed for the pathology labo of AZ Zeno.
+// Name: Yoram Vandenhouwe
+// Start of project: 13/02/2024
+// Implementation: 29/05/2024
+// Version: 1
+// Location: Logistics Hallway
+
 // Load Wi-Fi library
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -12,7 +21,7 @@ String ledlabState = "/lab/off";
 String ledLogState = "/log/off"; 
 char* result; 
 
-// Replace with your network credentials
+// Network credentials
 char* ssid = "AZ_Zeno_Gast";
 char* password = "";
 
@@ -30,10 +39,10 @@ unsigned long previousTime = 0;
 // Define timeout time in milliseconds (example: 2000ms = 2s)
 const long timeoutTime = 2000;
 //Your Domain name with URL path or IP address with path
-String serverNameLog = "http://192.168.0.107/";
-String serverNameLab = "http://192.168.0.108/";
+String serverNameLog = "http://172.27.4.159/";
+String serverNameLab = "http://172.27.4.92/";
 
-// the following variables are unsigned longs because the time, measured in
+// The following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.
 unsigned long lastTime = 0;
 // Timer set to 10 minutes (600000)
@@ -46,7 +55,7 @@ void setup() {
    // Serial port for debugging purposes
   Serial.begin(115200);  
   
-  // initialize the LED pin as an output for logistics department
+  // Initialize the LED pin as an output for logistics department
   pinMode(ledLog, OUTPUT);
   pinMode(ledlab, OUTPUT);
 
@@ -86,24 +95,24 @@ void loop() {
       
       // Send HTTP GET request
       int httpResponseCode = http.GET();
-      
+      // if there is a response:
       if (httpResponseCode>0) {
         Serial.print("HTTP Response code: ");
-        Serial.println(httpResponseCode);
-        String payload = http.getString();
+        Serial.println(httpResponseCode); 
+        String payload = http.getString(); // Read the webpage.
         Serial.println(payload);
       // Convert the payload and word to lowercase for case-insensitive comparison
         payload.toLowerCase();
       ledLogState.toLowerCase();
-
+        // Find the string present in the payload, keep the string form the point were a match was found
         char* resultLog = strstr(payload.c_str(), ledLogState.c_str());
-      if (resultLog != nullptr) {
+      if (resultLog != nullptr) { // if a match was found, set led to "off"
     digitalWrite(ledLog, LOW);
     } else {
     digitalWrite(ledLog, HIGH);
     }
     }
-      else {
+      else { // if website was found, set led to "on" and print error message
         Serial.print("Error code: ");
         Serial.println(httpResponseCode);
         digitalWrite(ledLog, HIGH);
@@ -120,26 +129,26 @@ http.end();
       
       // Send HTTP GET request
       httpResponseCode = http.GET();
-      
+      // if there is a response:
       if (httpResponseCode>0) {
         Serial.print("HTTP Response code: ");
         Serial.println(httpResponseCode);
-        String payload = http.getString();
+        String payload = http.getString();  // Read the webpage.
         Serial.println(payload);
       // Convert the payload and word to lowercase for case-insensitive comparison
         payload.toLowerCase();
         ledlabState.toLowerCase();
-
+         // Find the string present in the payload, keep the string form the point were a match was found
         char* resultLab = strstr(payload.c_str(), ledlabState.c_str());
         Serial.print(resultLab);
-      if (resultLab != nullptr) {
+      if (resultLab != nullptr) { // if a match was found, set led to "off"
     digitalWrite(ledlab, LOW);
     } else {
     digitalWrite(ledlab, HIGH);
     }
 
       }
-      else {
+      else { // if website was found, set led to "on" and print error message
         Serial.print("Error code: ");
         Serial.println(httpResponseCode);
         digitalWrite(ledlab, HIGH);

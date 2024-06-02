@@ -32,6 +32,10 @@ A manual is provided for a full explanation. The manual is in dutch.
 
 The project was realized with the help of ir Rob Vanden Broucke and Dr B.Lelie who, respectivly, guided with the coding and to functionality.
 
+The following guides were used to complete the product:
+The Lafvin ESP32 starter kit tutorial
+https://deepbluembedded.com/esp32-static-fixed-ip-address-arduino/
+
 
 ## Template for README
 Free-to-use template provided by link below:
